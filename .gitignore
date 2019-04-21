@@ -5,4 +5,4 @@ ethereum/compile.js
 ethereum/deploy.js
 /test
 ADDRESS
-.env
+.en
