@@ -16,6 +16,8 @@
         "@now/next": "0.0.81",
         "@zeit/next-css": "^0.2.0",
         "child_process": "^1.0.2",
+        "dotenv": "^7.0.0",
+        "firebase": "^5.10.0",
         "fs": "0.0.1-security",
         "fs-extra": "^5.0.0",
         "ganache-cli": "^6.1.8",

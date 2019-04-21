@@ -4,6 +4,7 @@ import { Card, Button, Icon } from 'semantic-ui-react';
 import Layout from '../components/Layout';
 import { Link } from '../routes';
 import Campaign from '../ethereum/campaign';
+import { loadFirebase } from '../lib/db';
 
 class CampaignIndex extends Component {
     static async getInitialProps() {
@@ -20,7 +21,32 @@ class CampaignIndex extends Component {
             descriptions.push(summary[6]);
         }
 
-        return { campaigns, titles, descriptions }; // === return { campaigns: campaigns }
+        let firebase = await loadFirebase();
+        let db = firebase.firestore();
+        let result = await new Promise((resolve, reject) => {
+            db.collection('contracts')
+                .limit(10)
+                .get()
+                .then(snapshot => {
+                    let data = [];
+                    snapshot.forEach(doc => {
+                        data.push(
+                            Object.assign(
+                                {
+                                    id: doc.id
+                                },
+                                doc.data()
+                            )
+                        );
+                    });
+                    resolve(data);
+                })
+                .catch(error => {
+                    reject([]);
+                });
+        });
+
+        return { campaigns, titles, descriptions, contracts: result }; // === return { campaigns: campaigns }
     }
 
     renderCampaigns() {
@@ -68,8 +94,20 @@ class CampaignIndex extends Component {
     }
 
     render() {
+        const contracts = this.props.contracts;
+
         return (
             <Layout>
+                <ul>
+                    {contracts.map(contract => (
+                        <li key="{contract.id}">
+                            <h2>
+                                {contract.address} has a balance of{' '}
+                                {contract.balance}
+                            </h2>
+                        </li>
+                    ))}
+                </ul>
                 <div>
                     <h3>Open Campaigns</h3>
                     <Link route="/campaigns/new">
