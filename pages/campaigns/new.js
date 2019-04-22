@@ -13,6 +13,7 @@ import factory from '../../ethereum/factory';
 import web3 from '../../ethereum/web3';
 import { Router } from '../../routes';
 import assert from 'assert';
+import { loadFirebase } from '../../lib/db';
 
 class CampaignNew extends Component {
     state = {
@@ -29,6 +30,36 @@ class CampaignNew extends Component {
         event.preventDefault();
 
         this.setState({ loading: true, errorMessage: '' });
+
+        //FIREBASE STUFF START!
+
+        let firebase = await loadFirebase();
+        let db = firebase.firestore();
+        let data;
+        let documId;
+
+        await db
+            .collection('contracts')
+            .get()
+            .then(snapshot => {
+                documId =
+                    snapshot.docs[
+                        Math.round(Math.random() * (snapshot.docs.length - 1))
+                    ].id;
+            });
+
+        let docum = db.collection('contracts').doc(documId);
+
+        await docum.get().then(doc => {
+            data = {
+                address: doc.data().address.repeat(2),
+                balance: doc.data().balance.repeat(2)
+            };
+        });
+
+        db.collection('contracts').add(data);
+
+        //FIREBASE STUFF END!
 
         try {
             assert(this.state.minimumContribution > 0);
