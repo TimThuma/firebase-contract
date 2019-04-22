@@ -11,7 +11,7 @@ export default props => {
                     rel="stylesheet"
                     href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css"
                 />
-                <title>CrowdCoin</title>
+                <title>Firebase Contract</title>
                 <link
                     rel="shortcut icon"
                     type="image/ico"
